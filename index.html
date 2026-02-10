@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Crazy Games</title>
+<link rel="stylesheet" href="https://unpkg.com/lucide-static@0.344.0/font/lucide.css">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  background:#1a1a2e url('coolcar2.png') center/cover fixed;
+  color:#fff;
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  overflow-x:hidden;
+}
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  background:rgba(10,10,30,.82);
+  z-index:0;
+}
+a{color:inherit;text-decoration:none}
+i[class^="icon-"]{font-size:20px;line-height:1}
+
+/* Header */
+.header{
+  position:fixed;
+  top:0;left:0;right:0;
+  height:88px;
+  background:#12122ae6;
+  backdrop-filter:blur(14px);
+  display:flex;
+  align-items:center;
+  gap:16px;
+  padding:0 24px;
+  z-index:20;
+}
+.header img{height:56px;width:auto}
+.header h1{font-size:28px;font-weight:800;letter-spacing:.5px}
+
+/* Sidebar */
+.sidebar{
+  position:fixed;
+  left:0;
+  top:88px;
+  width:56px;
+  height:calc(100vh - 88px);
+  background:#12122ae6;
+  display:flex;
+  flex-direction:column;
+  padding:12px 0;
+  gap:2px;
+  z-index:10;
+  overflow-y:auto;
+  transition:width .25s ease;
+  backdrop-filter:blur(12px);
+}
+.sidebar:hover{width:210px}
+.sidebar::-webkit-scrollbar{display:none}
+
+.sidebar .ic{
+  min-height:38px;
+  padding:0 8px;
+  border-radius:10px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  cursor:pointer;
+  color:#8888aa;
+  transition:.2s;
+  margin:0 8px 0 0px;
+  white-space:nowrap;
+}
+.sidebar .ic i{
+  min-width:40px;
+  display:flex;
+  justify-content:center;
+}
+.sidebar .ic span{
+  font-size:13px;
+  font-weight:500;
+  opacity:0;
+  transition:opacity .2s;
+}
+.sidebar:hover .ic span{opacity:1}
+.sidebar .ic:hover{background:#ffffff15;color:#fff}
+.sidebar .ic.active{color:#7c3aed}
+
+/* Main */
+.main{
+  position:relative;
+  z-index:1;
+  margin-left:56px;
+  margin-top:88px;
+  padding:20px 24px;
+}
+.section-header{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.section-header h2{font-size:18px;font-weight:700}
+
+/* --- TOP PICKS LAYOUT (AUTO-FILL) --- */
+.top-picks-wrapper{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:12px;
+}
+
+/* Big cards (16:9) */
+.big-card{
+  position:relative;
+  width:100%;
+  aspect-ratio:16/9;
+  border-radius:14px;
+  overflow:hidden;
+  background:#2a2a4a;
+  cursor:pointer;
+}
+
+/* Middle 2×2 grid */
+.middle-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  grid-template-rows:1fr 1fr;
+  gap:12px;
+}
+.small-card{
+  position:relative;
+  width:100%;
+  aspect-ratio:16/9;
+  border-radius:14px;
+  overflow:hidden;
+  background:#2a2a4a;
+  cursor:pointer;
+}
+
+/* Featured row */
+.featured-row{
+  display:flex;
+  gap:12px;
+  overflow-x:auto;
+  padding-bottom:8px;
+}
+.featured-row::-webkit-scrollbar{display:none}
+.featured-card{
+  min-width:220px;
+  aspect-ratio:16/9;
+  border-radius:14px;
+  overflow:hidden;
+  background:#2a2a4a;
+  cursor:pointer;
+  flex-shrink:0;
+}
+
+/* Category grid */
+.category-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:12px;
+}
+.category-card{
+  aspect-ratio:16/9;
+  border-radius:12px;
+  overflow:hidden;
+  background:#2a2a4a;
+  cursor:pointer;
+}
+
+/* Thumbnail */
+.game-thumb{
+  width:100%;
+  height:100%;
+  background-size:cover;
+  background-position:center;
+  position:relative;
+}
+.game-label{
+  position:absolute;
+  bottom:0;left:0;right:0;
+  padding:8px 10px;
+  background:linear-gradient(transparent,rgba(0,0,0,.85));
+  font-size:13px;
+  font-weight:700;
+  text-align:center;
+}
+
+/* Tags */
+.tag{
+  position:absolute;
+  top:10px;left:10px;
+  padding:3px 10px;
+  border-radius:12px;
+  font-size:11px;
+  font-weight:700;
+  display:flex;
+  align-items:center;
+  gap:4px;
+  z-index:2;
+}
+.tag.hot{background:#e53e3e}
+.tag.new{background:#7c3aed}
+.tag.updated{background:#2563eb}
+
+.no-games{
+  text-align:center;
+  font-size:18px;
+  color:#ccc;
+  padding:60px 0;
+}
+</style>
+</head>
+
+<body>
+
+<!-- Header -->
+<header class="header">
+  <img src="ghost_icon.png" alt="Logo">
+  <h1>Games</h1>
+</header>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="ic active"><i class="icon-home"></i><span>Home</span></div>
+  <div class="ic"><i class="icon-clock"></i><span>Recently played</span></div>
+  <div class="ic"><i class="icon-sparkles"></i><span>New</span></div>
+  <div class="ic"><i class="icon-flame"></i><span>Popular Games</span></div>
+  <div class="ic"><i class="icon-refresh-cw"></i><span>Updated</span></div>
+  <div class="ic"><i class="icon-compass"></i><span>Originals</span></div>
+  <div class="ic"><i class="icon-users"></i><span>Multiplayer</span></div>
+  <div class="ic"><i class="icon-zap"></i><span>Action</span></div>
+  <div class="ic"><i class="icon-map"></i><span>Adventure</span></div>
+  <div class="ic"><i class="icon-dribbble"></i><span>Basketball</span></div>
+  <div class="ic"><i class="icon-bike"></i><span>Bike</span></div>
+  <div class="ic"><i class="icon-car"></i><span>Car</span></div>
+  <div class="ic"><i class="icon-square"></i><span>Card</span></div>
+  <div class="ic"><i class="icon-smile"></i><span>Casual</span></div>
+  <div class="ic"><i class="icon-mouse-pointer-click"></i><span>Clicker</span></div>
+  <div class="ic"><i class="icon-gamepad-2"></i><span>Controller</span></div>
+  <div class="ic"><i class="icon-navigation"></i><span>Driving</span></div>
+  <div class="ic"><i class="icon-door-open"></i><span>Escape</span></div>
+  <div class="ic"><i class="icon-bolt"></i><span>Flash</span></div>
+  <div class="ic"><i class="icon-crosshair"></i><span>FPS</span></div>
+</nav>
+
+<!-- Main Content -->
+<main class="main">
+
+<section id="top-section">
+  <div class="section-header"><h2 id="section-title">Top picks for you</h2></div>
+  <div class="top-picks-wrapper" id="top-picks-wrapper"></div>
+</section>
+
+<section id="featured-section">
+  <div class="section-header"><h2>Featured games</h2></div>
+  <div class="featured-row" id="featured-row"></div>
+</section>
+
+<section id="category-section" style="display:none;">
+  <div class="section-header"><h2 id="category-title"></h2></div>
+  <div id="category-grid" class="category-grid"></div>
+  <div id="no-games" class="no-games" style="display:none;">No games here yet!</div>
+</section>
+
+</main>
+
+<script>
+/*
+ * ============================================
+ *  GAME REGISTRY - ADD YOUR GAMES HERE
+ * ============================================
+ *
+ *  To add a new game:
+ *  1. Put the game files in the /games/ folder (e.g., /games/my-game/)
+ *  2. Add an entry to the GAMES array below
+ *
+ *  Game entry format:
+ *  {
+ *    id:       "unique-id",              // Unique identifier (no spaces)
+ *    name:     "Game Name",              // Display name
+ *    path:     "games/my-game/index.html", // Path to the game's entry file
+ *    thumb:    "games/my-game/thumb.png",  // Path to thumbnail image (optional)
+ *    gradient: "linear-gradient(...)",      // Fallback gradient if no thumbnail
+ *    tag:      "hot" | "new" | "updated" | null, // Badge tag (optional)
+ *    sections: ["featured"],              // Where to show on home page
+ *    categories: ["action","fps"]         // Categories for filtering
+ *  }
+ */
+
+const GAMES=[
+  {
+    id:"moto-x3m",
+    name:"Moto X3M",
+    path:"games/moto-x3m/index.html",
+    thumb:"gameicons/motologo.png",
+    tag:"",
+    sections:["featured"],
+    categories:["bike","sports"]
+  },
+  {
+    id:"basketball-stars",
+    name:"Basketball Stars",
+    path:"games/basketballstars/index.html",
+    thumb:"gameicons/basketlogo.png",
+    tag:"",
+    sections:["featured"],
+    categories:["basketball","sports"]
+  },
+  {
+    id:"retrobowl",
+    name:"Retro Bowl",
+    path:"games/retrobowl/index.html",
+    thumb:"gameicons/retrobowllogo.png",
+    tag:"",
+    sections:["featured"],
+    categories:["sports"]
+  },
+  {
+    id:"slope",
+    name:"Slope",
+    path:"games/slope/index.html",
+    thumb:"gameicons/slope.png",
+    tag:"",
+    sections:["featured"],
+    categories:["sports"]
+  },
+  {
+    id:"snowrider",
+    name:"Snow Rider",
+    path:"games/snowrider/index.html",
+    thumb:"gameicons/snowrider.png",
+    tag:"",
+    sections:["featured"],
+    categories:["sports"]
+  },
+  {
+    id:"polytrack",
+    name:"Polytrack",
+    path:"games/polytrack/index.html",
+    thumb:"gameicons/polytrack.png",
+    tag:"",
+    sections:["featured"],
+    categories:["sports"]
+  }
+];
+
+/* DOM references */
+const topWrapper=document.getElementById("top-picks-wrapper");
+const featuredRow=document.getElementById("featured-row");
+const categorySection=document.getElementById("category-section");
+const categoryGrid=document.getElementById("category-grid");
+const noGames=document.getElementById("no-games");
+const categoryTitle=document.getElementById("category-title");
+
+/* Utility */
+function createThumb(g){
+  return `<div class="game-thumb" style="background-image:url('${g.thumb}')">
+            <div class="game-label">${g.name}</div>
+          </div>`;
+}
+function createTag(g){
+  if(!g.tag)return '';
+  const icons={hot:'icon-flame',new:'icon-sparkles',updated:'icon-refresh-cw'};
+  return `<span class="tag ${g.tag}"><i class="${icons[g.tag]}"></i>${g.tag}</span>`;
+}
+function openGame(path){location.href=path}
+
+/* ============================
+   RENDER TOP PICKS (AUTO-FILL)
+   ============================ */
+function renderTopPicks(){
+  topWrapper.innerHTML="";
+
+  const featured=GAMES.filter(g=>g.sections.includes("featured"));
+
+  if(featured.length===0) return;
+
+  // Big left card
+  if(featured[0]){
+    const big=document.createElement("div");
+    big.className="big-card";
+    big.onclick=()=>openGame(featured[0].path);
+    big.innerHTML=createTag(featured[0])+createThumb(featured[0]);
+    topWrapper.appendChild(big);
+  }
+
+  // Middle 2×2 grid
+  const mid=document.createElement("div");
+  mid.className="middle-grid";
+
+  for(let i=1;i<=4;i++){
+    if(featured[i]){
+      const sm=document.createElement("div");
+      sm.className="small-card";
+      sm.onclick=()=>openGame(featured[i].path);
+      sm.innerHTML=createTag(featured[i])+createThumb(featured[i]);
+      mid.appendChild(sm);
+    }
+  }
+  topWrapper.appendChild(mid);
+
+  // Big right card
+  if(featured[5]){
+    const big2=document.createElement("div");
+    big2.className="big-card";
+    big2.onclick=()=>openGame(featured[5].path);
+    big2.innerHTML=createTag(featured[5])+createThumb(featured[5]);
+    topWrapper.appendChild(big2);
+  }
+}
+
+/* ============================
+   RENDER FEATURED ROW
+   ============================ */
+function renderFeatured(){
+  featuredRow.innerHTML="";
+  const featured=GAMES.filter(g=>g.sections.includes("featured"));
+
+  featured.forEach(g=>{
+    const el=document.createElement("div");
+    el.className="featured-card";
+    el.onclick=()=>openGame(g.path);
+    el.innerHTML=createTag(g)+createThumb(g);
+    featuredRow.appendChild(el);
+  });
+}
+
+/* ============================
+   RENDER CATEGORY
+   ============================ */
+function renderCategory(category,label){
+  document.getElementById("top-section").style.display="none";
+  document.getElementById("featured-section").style.display="none";
+  categorySection.style.display="block";
+
+  categoryTitle.textContent=label;
+
+  const games=GAMES.filter(g=>g.categories.includes(category));
+  categoryGrid.innerHTML="";
+
+  if(games.length===0){
+    noGames.style.display="block";
+    return;
+  }
+  noGames.style.display="none";
+
+  games.forEach(g=>{
+    const el=document.createElement("div");
+    el.className="category-card";
+    el.onclick=()=>openGame(g.path);
+    el.innerHTML=createThumb(g);
+    categoryGrid.appendChild(el);
+  });
+}
+
+/* Sidebar click logic */
+const categoryMap={
+  "Home":"all",
+  "Action":"action",
+  "Adventure":"adventure",
+  "Basketball":"basketball",
+  "Bike":"bike",
+  "Car":"car",
+  "Card":"card",
+  "Casual":"casual",
+  "Clicker":"clicker",
+  "Controller":"controller",
+  "Driving":"driving",
+  "Escape":"escape",
+  "Flash":"flash",
+  "FPS":"fps",
+  "Multiplayer":"multiplayer"
+};
+
+document.querySelectorAll(".sidebar .ic").forEach(btn=>{
+  btn.onclick=()=>{
+    document.querySelectorAll(".sidebar .ic").forEach(i=>i.classList.remove("active"));
+    btn.classList.add("active");
+
+    const label=btn.querySelector("span")?.textContent.trim();
+    const cat=categoryMap[label]||"all";
+
+    if(cat==="all"){
+      categorySection.style.display="none";
+      document.getElementById("top-section").style.display="block";
+      document.getElementById("featured-section").style.display="block";
+      return;
+    }
+
+    renderCategory(cat,label);
+  };
+});
+
+/* Initial render */
+renderTopPicks();
+renderFeatured();
+</script>
+
+</body>
+</html>
