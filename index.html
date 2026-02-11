@@ -137,20 +137,23 @@ i[class^="icon-"]{font-size:20px;line-height:1}
 /* Featured row */
 .featured-row{
   display:flex;
+  flex-wrap:wrap;
   gap:12px;
-  overflow-x:auto;
   padding-bottom:8px;
 }
 .featured-row::-webkit-scrollbar{display:none}
+
 .featured-card{
-  min-width:220px;
+  flex:0 0 calc((100% - 60px) / 6);
+  max-width:calc((100% - 60px) / 6);
   aspect-ratio:16/9;
   border-radius:14px;
   overflow:hidden;
   background:#2a2a4a;
   cursor:pointer;
-  flex-shrink:0;
 }
+
+
 
 /* Category grid */
 .category-grid{
@@ -288,60 +291,97 @@ i[class^="icon-"]{font-size:20px;line-height:1}
 
 const GAMES=[
   {
-    id:"moto-x3m",
-    name:"Moto X3M",
-    path:"games/moto-x3m/index.html",
-    thumb:"gameicons/motologo.png",
-    tag:"",
-    sections:["featured"],
-    categories:["bike","sports"]
+    id: "bloxd.io",
+    name: "bloxd.io",
+    path: "games/bloxd.io/bloxd-io.html",
+    thumb: "gameicons/bloxdiologo.png",
+    tag: "",
+    sections: ["featured"],
+    categories: ["sports"]
   },
   {
-    id:"basketball-stars",
-    name:"Basketball Stars",
-    path:"games/basketballstars/index.html",
-    thumb:"gameicons/basketlogo.png",
-    tag:"",
-    sections:["featured"],
-    categories:["basketball","sports"]
+    id: "slope",
+    name: "Slope",
+    path: "games/slope/index.html",
+    thumb: "gameicons/slope.png",
+    tag: "",
+    sections: ["featured"],
+    categories: ["sports"]
   },
   {
-    id:"retrobowl",
-    name:"Retro Bowl",
-    path:"games/retrobowl/index.html",
-    thumb:"gameicons/retrobowllogo.png",
-    tag:"",
-    sections:["featured"],
-    categories:["sports"]
+    id: "retrobowl",
+    name: "Retro Bowl",
+    path: "games/retrobowl/index.html",
+    thumb: "gameicons/retrobowllogo.png",
+    tag: "",
+    sections: ["featured"],
+    categories: ["sports"]
   },
   {
-    id:"slope",
-    name:"Slope",
-    path:"games/slope/index.html",
-    thumb:"gameicons/slope.png",
-    tag:"",
-    sections:["featured"],
-    categories:["sports"]
+    id: "basketball-stars",
+    name: "Basketball Stars",
+    path: "games/basketballstars/index.html",
+    thumb: "gameicons/basketlogo.png",
+    tag: "",
+    sections: ["featured"],
+    categories: ["basketball", "sports"]
   },
   {
-    id:"snowrider",
-    name:"Snow Rider",
-    path:"games/snowrider/index.html",
-    thumb:"gameicons/snowrider.png",
-    tag:"",
-    sections:["featured"],
-    categories:["sports"]
+    id: "snowrider",
+    name: "Snow Rider",
+    path: "games/snowrider/index.html",
+    thumb: "gameicons/snowrider.png",
+    tag: "",
+    sections: ["featured"],
+    categories: ["sports"]
   },
   {
-    id:"polytrack",
-    name:"Polytrack",
-    path:"games/polytrack/index.html",
-    thumb:"gameicons/polytrack.png",
-    tag:"",
-    sections:["featured"],
-    categories:["sports"]
+    id: "moto-x3m",
+    name: "Moto X3M",
+    path: "games/moto-x3m/index.html",
+    thumb: "gameicons/motologo.png",
+    tag: "",
+    sections: ["featured"],
+    categories: ["bike", "sports"]
+  },
+  {
+    id: "polytrack",
+    name: "Polytrack",
+    path: "games/polytrack/index.html",
+    thumb: "gameicons/polytrack.png",
+    tag: "",
+    sections: ["featured"],
+    categories: ["sports"]
+  },
+  {
+    id: "bitlife",
+    name: "Bitlife",
+    path: "games/bitlife/index.html",
+    thumb: "gameicons/bitlifelogo.png",
+    tag: "",
+    sections: ["featured"],
+    categories: ["sports"]
+  },
+  {
+    id: "cookie-clicker",
+    name: "Cookie Clicker",
+    path: "games/cookie-clicker/index.html",
+    thumb: "gameicons/cookieclicker.png",
+    tag: "",
+    sections: ["featured"],
+    categories: ["sports"]
+  },
+  {
+    id: "worlds-hardest-game",
+    name: "World's Hardest Game",
+    path: "games/worlds-hardest-game/index.html",
+    thumb: "gameicons/worldshardestgame.jpg",
+    tag: "",
+    sections: ["featured"],
+    categories: ["sports"]
   }
 ];
+
 
 /* DOM references */
 const topWrapper=document.getElementById("top-picks-wrapper");
@@ -353,10 +393,9 @@ const categoryTitle=document.getElementById("category-title");
 
 /* Utility */
 function createThumb(g){
-  return `<div class="game-thumb" style="background-image:url('${g.thumb}')">
-            <div class="game-label">${g.name}</div>
-          </div>`;
+  return `<div class="game-thumb" style="background-image:url('${g.thumb}')"></div>`;
 }
+
 function createTag(g){
   if(!g.tag)return '';
   const icons={hot:'icon-flame',new:'icon-sparkles',updated:'icon-refresh-cw'};
